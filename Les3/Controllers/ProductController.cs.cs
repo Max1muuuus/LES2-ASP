@@ -1,28 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Les3.Models;
+using Les3.Dtos;
+using Les3.Services;
 
 namespace Les3.Controllers
 {
-    public class ProductController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class ProductController : ControllerBase
     {
-        readonly Data.AppDbContext context;
+        readonly ProductService service;
 
-        public ProductController(Data.AppDbContext _context)
+        public ProductController(ProductService _service)
         {
-            context = _context;
+            service = _service;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProducts()
+        public IActionResult GetProducts()
         {
-            var products = context.Products.ToList();
-            return Ok(products);
+            return Ok(service.GetProducts());
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetProduct(int id)
         {
-            var product = context.Products.Find(id);
+            var product = service.GetProduct(id);
 
             if (product == null)
             {
@@ -33,37 +35,26 @@ namespace Les3.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateProduct(Product obj)
+        public IActionResult CreateProduct(CreateProductDto obj)
         {
             if (obj == null)
             {
-                return BadRequest("Product object is null.");
+                return BadRequest();
             }
 
-            context.Products.Add(obj);
-            context.SaveChanges();
-
-            return Ok(obj);
+            return Ok(service.CreateProduct(obj));
         }
 
-        [HttpGet]
+        [HttpGet("price")]
         public IActionResult GetProductsByPrice()
         {
-            var products = context.Products
-                .OrderBy(x => x.Price)
-                .ToList();
-
-            return Ok(products);
+            return Ok(service.GetProductsByPrice());
         }
 
-        [HttpGet]
+        [HttpGet("search")]
         public IActionResult Search(string name)
         {
-            var products = context.Products
-                .Where(x => x.Name.Contains(name))
-                .ToList();
-
-            return Ok(products);
+            return Ok(service.Search(name));
         }
     }
 }
