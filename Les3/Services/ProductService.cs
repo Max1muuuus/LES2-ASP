@@ -47,7 +47,7 @@ namespace Les3.Services
 
         public ProductDto CreateProduct(CreateProductDto obj)
         {
-            var product = new Product
+            var product = new ProductEntity
             {
                 Name = obj.Name,
                 Price = obj.Price,

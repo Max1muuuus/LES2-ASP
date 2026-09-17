@@ -2,7 +2,7 @@
 
 namespace Les3.Models
 {
-    public class Product
+    public class ProductEntity
     {
         [Key]
         public int Id { get; set; }
